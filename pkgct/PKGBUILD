@@ -1,0 +1,14 @@
+pkgname=pkgct
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Context-aware package and bundle manager wrapper for pacman"
+arch=('any')
+url="https://local/pkgct"
+license=('MIT')
+depends=('bash' 'pacman')
+source=('pkgct')
+sha256sums=('SKIP')
+
+package() {
+    install -Dm755 pkgct "$pkgdir/usr/bin/pkgct"
+}

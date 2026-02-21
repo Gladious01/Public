@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# pkgct visual bundle shell (temporary, no bashrc)
+
+PKGCT_DIR="$HOME/.pkgct"
+SYSTEM_BUNDLES="$PKGCT_DIR/system-bundles"
+LOCAL_BUNDLES="$PKGCT_DIR/local-bundles"
+STATE_FILE="$PKGCT_DIR/state.txt"
+
+mkdir -p "$SYSTEM_BUNDLES" "$LOCAL_BUNDLES" "$(dirname "$STATE_FILE")"
+
+# Load state
+if [ -f "$STATE_FILE" ]; then
+    . "$STATE_FILE"
+else
+    scope="system"
+    bundle=""
+fi
+
+save_state() {
+    cat > "$STATE_FILE" <<EOF
+scope="$scope"
+bundle="$bundle"
+EOF
+}
+
+# Launch temporary shell with echo-printed visual prompt
+launch_shell() {
+        while true; do
+        # Draw the GUI
+        clear
+        echo "+--------------------------+"
+        echo "| pkgct bundle indicator   |"
+        echo "+--------------------------+"
+        if [ -n "$bundle" ]; then
+            printf "| Scope: %-10s Bundle: %-10s |\n" "$scope" "$bundle"
+        else
+            printf "| Scope: %-17s |\n" "$scope"
+        fi
+        echo "+--------------------------+"
+        echo
+
+        # Read a command from the user
+        read -e -p "$ " cmd
+
+        # Exit on 'exit'
+        [ "$cmd" = "exit" ] && break
+
+        # Execute the command
+        eval "$cmd"
+
+        # Pause briefly to avoid screen flicker
+        sleep 0.05
+    done
+}
+
+cmd_set() {
+    scope="$1"
+    bundle="$2"
+    save_state
+    echo "Switched to scope: $scope, bundle: ${bundle:-<none>}"
+    launch_shell
+}
+
+cmd_list() {
+    if [ "$1" = "system" ]; then
+        echo "System bundles:"
+        ls -1 "$SYSTEM_BUNDLES" 2>/dev/null | sed 's/\.txt$//'
+    elif [ "$1" = "local" ]; then
+        echo "Local bundles:"
+        ls -1 "$LOCAL_BUNDLES" 2>/dev/null | sed 's/\.txt$//'
+    else
+        echo "Specify: pkgct list system OR pkgct list local"
+    fi
+}
+
+# Dispatcher
+case "$1" in
+    init) launch_shell ;;
+    list) cmd_list "$2" ;;
+    set) cmd_set "$2" "$3" ;;
+    *) echo "Usage: pkgct {init|list|set}" ;;
+esac
