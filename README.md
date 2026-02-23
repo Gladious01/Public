@@ -8,4 +8,4 @@ List of projects available in this repository:
   - Very simple cli block blaster game made on c++.
 
 - [PKGCT](https://github.com/Gladious01/Public/tree/main/pkgct)
-  - Package manager I made for arch linux
+  - Package manager I made for arch linux.
