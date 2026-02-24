@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# pkgct visual bundle shell (temporary, no bashrc)
 
 PKGCT_DIR="$HOME/.pkgct"
 SYSTEM_BUNDLES="$PKGCT_DIR/system-bundles"
@@ -25,40 +24,23 @@ EOF
 
 # Launch temporary shell with echo-printed visual prompt
 launch_shell() {
-        while true; do
-        # Draw the GUI
-        clear
-        echo "+--------------------------+"
-        echo "| pkgct bundle indicator   |"
-        echo "+--------------------------+"
+    while true; do
+        # Construct the prompt in red
         if [ -n "$bundle" ]; then
-            printf "| Scope: %-10s Bundle: %-10s |\n" "$scope" "$bundle"
+            prompt="\033[31m[$scope:$bundle]\$ \033[0m"
         else
-            printf "| Scope: %-17s |\n" "$scope"
+            prompt="\033[31m[$scope]\$ \033[0m"
         fi
-        echo "+--------------------------+"
-        echo
 
-        # Read a command from the user
-        read -e -p "$ " cmd
+        # Read command with prompt, keeping history visible
+        read -e -p "$(echo -e $prompt)" cmd
 
         # Exit on 'exit'
         [ "$cmd" = "exit" ] && break
 
-        # Execute the command
+        # Evaluate the command
         eval "$cmd"
-
-        # Pause briefly to avoid screen flicker
-        sleep 0.05
     done
-}
-
-cmd_set() {
-    scope="$1"
-    bundle="$2"
-    save_state
-    echo "Switched to scope: $scope, bundle: ${bundle:-<none>}"
-    launch_shell
 }
 
 cmd_list() {
@@ -73,10 +55,215 @@ cmd_list() {
     fi
 }
 
+cmd_set() {
+    local new_scope="$1"
+    local new_bundle="$2"
+
+    # Validate scope
+    if [ "$new_scope" != "system" ] && [ "$new_scope" != "local" ]; then
+        echo "Error: Invalid scope. Must be 'system' or 'local'."
+        return
+    fi
+
+    # If new_bundle is empty, just set scope and clear bundle
+    if [ -z "$new_bundle" ]; then
+        scope="$new_scope"
+        bundle=""
+
+        save_state
+        echo "Switched to scope: $scope"
+        launch_shell
+    else
+        # Validate bundle existence
+        local bundle_path=""
+        if [ "$new_scope" = "system" ]; then
+            bundle_path="$SYSTEM_BUNDLES/$new_bundle.txt"
+        else
+            bundle_path="$LOCAL_BUNDLES/$new_bundle.txt"
+        fi
+
+        if [ ! -f "$bundle_path" ]; then
+            echo "Error: Bundle '$new_bundle' does not exist in scope '$new_scope'."
+            return
+        fi
+
+        # Set scope and bundle if valid
+        scope="$new_scope"
+        bundle="$new_bundle"
+
+        save_state
+        echo "Switched to scope: $scope, bundle: $bundle"
+        launch_shell
+    fi
+}
+
+cmd_bundle() {
+    # Check if scope is set and non-empty
+    if [ -z "$scope" ]; then
+        echo "Needs a scope"
+        return
+    fi
+
+    case "$1" in
+    new)
+        if [ -z "$2" ]; then
+            echo "Usage: pkgct bundle new <bundle>"
+            return
+        fi
+        bundle="$2"
+        # Example: create a new bundle file under the selected scope directory
+        if [ "$scope" = "system" ]; then
+            touch "$SYSTEM_BUNDLES/$bundle.txt"
+        elif [ "$scope" = "local" ]; then
+            touch "$LOCAL_BUNDLES/$bundle.txt"
+        else
+            echo "Unknown scope: $scope"
+            return
+        fi
+        save_state
+        echo "Created new bundle '$bundle' at scope: $scope"
+        ;;
+    delete)
+        if [ -z "$2" ]; then
+            echo "Usage: pkgct bundle delete <bundle>"
+            return
+        fi
+        
+        bundle="$2"
+
+        if [ "$scope" = "system" ]; then
+            rm -f "$SYSTEM_BUNDLES/$bundle.txt"
+        elif [ "$scope" = "local" ]; then
+            rm -f "$LOCAL_BUNDLES/$bundle.txt"
+        else
+            echo "Unknown scope: $scope"
+            return
+        fi
+        save_state
+        echo "Deleted bundle '$bundle' at scope: $scope"
+        ;;
+    add)
+        package="$2"
+
+        if [ -z "$package" ]; then
+            echo "Usage: pkgct bundle add <package>"
+            return
+        fi
+
+        # Query pacman to show what would be installed (simulate install)
+        echo "Querying pacman for package '$package' and its dependencies..."
+
+        if command -v pactree >/dev/null 2>&1; then
+            echo "Packages that would be installed (including dependencies):"
+            pactree -u "$package"
+        else
+            echo "pactree not found, showing basic info instead:"
+            pacman -Si "$package"
+            echo "(Install dependencies list requires 'pactree' utility for full tree)"
+        fi
+        
+        # Prompt user for confirmation
+        read -r -p "Do you want to add '$package' to the bundle? [y/N] " confirm
+        if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        # Append package to bundle.txt (assuming bundle file path is set)
+        # Validate bundle path first
+        if [ -z "$bundle" ]; then
+            echo "Error: No bundle selected."
+            return
+        fi
+
+        if [ "$scope" = "system" ]; then
+            bundle_file="$SYSTEM_BUNDLES/$bundle.txt"
+        else
+            bundle_file="$LOCAL_BUNDLES/$bundle.txt"
+        fi
+
+        # Append package with newline if not already present
+        if grep -qxF "$package" "$bundle_file"; then
+            echo "Package '$package' is already in the bundle."
+        else
+            echo "$package" >> "$bundle_file"
+            echo "Package '$package' added to bundle '$bundle'."
+        fi
+        else
+            echo "Aborted adding package."
+        fi
+        ;;
+    remove) ;;
+    install) ;;
+    unistall) ;;
+    export)
+        # Check if a bundle name is provided
+        if [ -z "$2" ]; then
+            echo "Usage: pkgct bundle export <bundle>"
+            return
+        fi
+
+        local export_bundle="$2"
+        local source_file=""
+
+        # Determine source file based on current scope
+        if [ "$scope" = "system" ]; then
+            source_file="$SYSTEM_BUNDLES/$export_bundle.txt"
+        elif [ "$scope" = "local" ]; then
+            source_file="$LOCAL_BUNDLES/$export_bundle.txt"
+        fi
+
+        # Check if source bundle exists
+        if [ ! -f "$source_file" ]; then
+            echo "Bundle '$export_bundle' does not exist in scope '$scope'."
+            return
+        fi
+
+        # Define destination path in Downloads folder
+        local downloads_dir="$HOME/Downloads"
+        mkdir -p "$downloads_dir"
+
+        local dest_file="$downloads_dir/$export_bundle.txt"
+
+        # Copy the bundle file to Downloads
+        cp "$source_file" "$dest_file"
+
+        if [ $? -eq 0 ]; then
+            echo "Exported bundle '$export_bundle' to $dest_file"
+        else
+            echo "Failed to export bundle '$export_bundle'."
+        fi
+        ;;
+    list)
+        if [ -z "$2" ]; then
+            echo "Usage: pkgct bundle list <bundle>"
+            return
+        fi
+
+        local list_bundle="$2"
+        local bundle_file=""
+
+        if [ "$scope" = "system" ]; then
+            bundle_file="$SYSTEM_BUNDLES/$list_bundle.txt"
+        elif [ "$scope" = "local" ]; then
+            bundle_file="$LOCAL_BUNDLES/$list_bundle.txt"
+        fi
+
+        if [ ! -f "$bundle_file" ]; then
+            echo "Bundle '$list_bundle' does not exist in scope '$scope'."
+            return
+        fi
+
+        echo "Bundle $list_bundle packages:"
+        cat "$bundle_file"
+        ;;
+    *)
+        echo "Usage: pkgct bundle {new|delete|add|remove|install|unistall|export|list} <bundle>"
+        ;;
+    esac
+}
+
 # Dispatcher
 case "$1" in
     init) launch_shell ;;
     list) cmd_list "$2" ;;
     set) cmd_set "$2" "$3" ;;
-    *) echo "Usage: pkgct {init|list|set}" ;;
+    bundle) cmd_bundle "$2" "$3" ;;
+    *) echo "Usage: pkgct {init|list|set|bundle}" ;;
 esac
