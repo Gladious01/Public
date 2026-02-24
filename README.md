@@ -11,4 +11,4 @@ List of projects available in this repository:
   - Collection of themes for various applications.
 
 - [pkgct](https://github.com/Gladious01/Public/tree/main/pkgct)
-  - A package management utility tool.
+  - A package management tool for arch linux.
