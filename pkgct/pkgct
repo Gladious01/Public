@@ -43,6 +43,14 @@ launch_shell() {
     done
 }
 
+cmd_set() {
+    scope="$1"
+    bundle="$2"
+    save_state
+    echo "Switched to scope: $scope, bundle: ${bundle:-<none>}"
+    launch_shell
+}
+
 cmd_list() {
     if [ "$1" = "system" ]; then
         echo "System bundles:"
