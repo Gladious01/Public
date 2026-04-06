@@ -136,8 +136,6 @@ cmd_bundle() {
         echo "Usage: pkgct bundle delete <bundle>"
         return
     fi
-    
-    bundle="$2"
 
     if [ "$scope" = "system" ]; then
         rm -f "$SYSTEM_BUNDLES/$bundle.txt"
@@ -151,50 +149,59 @@ cmd_bundle() {
     echo "Deleted bundle '$bundle' at scope: $scope"
     ;;
     add)
-    package="$2"
+    package_or_group="$2"
 
-    if [ -z "$package" ]; then
-        echo "Usage: pkgct bundle add <package>"
+    if [ -z "$package_or_group" ]; then
+        echo "Usage: pkgct bundle add <package|group>"
         return
     fi
 
-    # Query pacman to show what would be installed (simulate install)
-    echo "Querying pacman for package '$package' and its dependencies..."
+    # Inform user we're querying pacman about the package or group
+    echo "Querying pacman for '$package_or_group' and its dependencies or group members..."
 
-    if command -v pactree >/dev/null 2>&1; then
+    # Check if input is a package by querying pacman -Qi (package info)
+    if command -v pactree >/dev/null 2>&1 && pacman -Qi "$package_or_group" >/dev/null 2>&1; then
+        # pactree is available and input is a package
         echo "Packages that would be installed (including dependencies):"
-        pactree -u "$package"
+        pactree -u "$package_or_group"
+
+    # If not a package, check if input is a group by listing group members
+    elif pacman -Sg "$package_or_group" >/dev/null 2>&1; then
+        echo "Group '$package_or_group' contains the following packages:"
+        pacman -Sg "$package_or_group"
+
     else
-        echo "pactree not found, showing basic info instead:"
-        pacman -Si "$package"
-        echo "(Install dependencies list requires 'pactree' utility for full tree)"
-    fi
-    
-    # Prompt user for confirmation
-    read -r -p "Do you want to add '$package' to the bundle? [y/N] " confirm
-    if [[ "$confirm" =~ ^[Yy]$ ]]; then
-    # Append package to bundle.txt (assuming bundle file path is set)
-    # Validate bundle path first
-    if [ -z "$bundle" ]; then
-        echo "Error: No bundle selected."
+        # Neither package nor group found
+        echo "Package or group '$package_or_group' not found."
         return
     fi
 
-    if [ "$scope" = "system" ]; then
-        bundle_file="$SYSTEM_BUNDLES/$bundle.txt"
-    else
-        bundle_file="$LOCAL_BUNDLES/$bundle.txt"
-    fi
+    # Prompt user to confirm adding the package or group to the bundle
+    read -r -p "Do you want to add '$package_or_group' to the bundle? [y/N] " confirm
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        # Validate that a bundle is selected
+        if [ -z "$bundle" ]; then
+            echo "Error: No bundle selected."
+            return
+        fi
 
-    # Append package with newline if not already present
-    if grep -qxF "$package" "$bundle_file"; then
-        echo "Package '$package' is already in the bundle."
+        # Determine the bundle file path based on scope (system or local)
+        if [ "$scope" = "system" ]; then
+            bundle_file="$SYSTEM_BUNDLES/$bundle.txt"
+        else
+            bundle_file="$LOCAL_BUNDLES/$bundle.txt"
+        fi
+
+        # Check if the package or group is already listed in the bundle to avoid duplicates
+        if grep -qxF "$package_or_group" "$bundle_file"; then
+            echo "'$package_or_group' is already in the bundle."
+        else
+            # Append the package or group to the bundle file
+            echo "$package_or_group" >> "$bundle_file"
+            echo "'$package_or_group' added to bundle '$bundle'."
+        fi
     else
-        echo "$package" >> "$bundle_file"
-        echo "Package '$package' added to bundle '$bundle'."
-    fi
-    else
-        echo "Aborted adding package."
+        echo "Aborted adding '$package_or_group'."
     fi
     ;;
     remove)

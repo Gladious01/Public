@@ -6,9 +6,9 @@ xdata = pkgtype=pkg
 pkgver = 0.1.0-1
 pkgdesc = Context-aware package and bundle manager wrapper for pacman
 url = https://local/pkgct
-builddate = 1771959182
+builddate = 1775508007
 packager = Unknown Packager
-size = 7429
+size = 9815
 arch = any
 license = MIT
 depend = bash
