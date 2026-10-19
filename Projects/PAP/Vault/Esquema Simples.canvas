@@ -1,0 +1,24 @@
+{
+	"nodes":[
+		{"id":"167082e451f5271e","type":"text","text":"Alimentação","x":-140,"y":-290,"width":207,"height":60},
+		{"id":"793fbc1bcd468c80","type":"text","text":"Garra","x":100,"y":-110,"width":207,"height":60},
+		{"id":"0533b19706f65e93","type":"text","text":"Esteira","x":340,"y":-110,"width":207,"height":60},
+		{"id":"956fa9e9903c26b3","type":"text","text":"Controlador (Arduino)","x":-140,"y":-110,"width":207,"height":60},
+		{"id":"9f110ea839ba795e","type":"text","text":"Sensores","x":-314,"y":140,"width":207,"height":60},
+		{"id":"86a9827bc16fb36f","type":"text","text":"Sensor de cor","x":-3,"y":140,"width":207,"height":60},
+		{"id":"ffc8bbf33f01e15f","type":"text","text":"Painel de controlo","x":-460,"y":40,"width":207,"height":60},
+		{"id":"c2a1600d2a3c6ba8","type":"text","text":"Braço Robótico","x":-380,"y":-110,"width":207,"height":60}
+	],
+	"edges":[
+		{"id":"e4b8525b5a988623","fromNode":"167082e451f5271e","fromSide":"bottom","toNode":"956fa9e9903c26b3","toSide":"top","color":"1"},
+		{"id":"6bb1228eb07cd28b","fromNode":"167082e451f5271e","fromSide":"bottom","toNode":"793fbc1bcd468c80","toSide":"top","color":"1"},
+		{"id":"70ccb328eca43276","fromNode":"167082e451f5271e","fromSide":"bottom","toNode":"0533b19706f65e93","toSide":"top","color":"1"},
+		{"id":"fda0544680a70875","fromNode":"956fa9e9903c26b3","fromSide":"bottom","toNode":"793fbc1bcd468c80","toSide":"bottom","color":"4"},
+		{"id":"8d4f4b14b8836042","fromNode":"956fa9e9903c26b3","fromSide":"bottom","toNode":"0533b19706f65e93","toSide":"bottom","color":"4"},
+		{"id":"803b096d2afea18e","fromNode":"956fa9e9903c26b3","fromSide":"bottom","toNode":"86a9827bc16fb36f","toSide":"top","color":"4"},
+		{"id":"5c8f6b518b4b6a41","fromNode":"956fa9e9903c26b3","fromSide":"bottom","toNode":"9f110ea839ba795e","toSide":"top","color":"4"},
+		{"id":"462f0eba9f8ec551","fromNode":"ffc8bbf33f01e15f","fromSide":"top","toNode":"956fa9e9903c26b3","toSide":"bottom","color":"5"},
+		{"id":"4685506ed8186964","fromNode":"167082e451f5271e","fromSide":"bottom","toNode":"c2a1600d2a3c6ba8","toSide":"top","color":"1"},
+		{"id":"e46b16123f684ed0","fromNode":"956fa9e9903c26b3","fromSide":"bottom","toNode":"c2a1600d2a3c6ba8","toSide":"bottom","color":"4"}
+	]
+}
