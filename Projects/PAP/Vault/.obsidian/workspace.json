@@ -11,17 +11,14 @@
             "id": "3d8a60edee333d91",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "Esquema Simples.canvas",
-                "viewState": {
-                  "x": 43.5,
-                  "y": -45,
-                  "zoom": 0
-                }
+                "file": "Garras.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "Esquema Simples"
+              "icon": "lucide-file",
+              "title": "Garras"
             }
           },
           {
@@ -44,16 +41,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Garras.md",
+                "file": "Braço Robótico.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Garras"
+              "title": "Braço Robótico"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -220,13 +216,13 @@
       "bases:Criar nova base": false
     }
   },
-  "active": "0e06123179ffe202",
+  "active": "3d8a60edee333d91",
   "lastOpenFiles": [
-    "Esteira.md",
-    "Esquema Simples.canvas",
     "Braço Robótico.md",
-    "Garras.md",
     "Braço Robótico e Garra.canvas",
+    "Esquema Simples.canvas",
+    "Esteira.md",
+    "Garras.md",
     "Bem-vindo.md"
   ]
 }
