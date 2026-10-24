@@ -52,7 +52,8 @@
               "title": "Garras"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -219,13 +220,13 @@
       "bases:Criar nova base": false
     }
   },
-  "active": "3d8a60edee333d91",
+  "active": "0e06123179ffe202",
   "lastOpenFiles": [
-    "Braço Robótico.md",
     "Esteira.md",
+    "Esquema Simples.canvas",
+    "Braço Robótico.md",
     "Garras.md",
     "Braço Robótico e Garra.canvas",
-    "Esquema Simples.canvas",
     "Bem-vindo.md"
   ]
 }
