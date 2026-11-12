@@ -3,5 +3,5 @@ Braço robótico articulado destinado à manipulação e movimentação de objet
 #### **Características:**
 
 #### **Material:**
-- **Estrutura:** PLA.
-- **Atuadores:** 4 Motores de passo
+- **Estrutura:** PETG.
+- **Atuadores:** 6 Motores de passo
