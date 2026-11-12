@@ -30,12 +30,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Sensor de Presença.md",
+                "file": "Braço Robótico.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Sensor de Presença"
+              "title": "Braço Robótico"
             }
           },
           {
@@ -236,12 +236,12 @@
   },
   "active": "1c9d15250c4a0bf0",
   "lastOpenFiles": [
+    "Braço Robótico e Garra.canvas",
+    "Esquema Simples.canvas",
+    "Esteira.md",
     "Garras.md",
     "Sensor de Presença.md",
-    "Esquema Simples.canvas",
     "Braço Robótico.md",
-    "Esteira.md",
-    "Braço Robótico e Garra.canvas",
     "Bem-vindo.md"
   ]
 }

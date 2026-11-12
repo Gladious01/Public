@@ -6,5 +6,5 @@ Garra mecânica para o braço robótico, capaz de agarrar, transportar e liberta
 - **Acionamento:** Servo motor MG90S.
 - **Montagem:** Compatível com o sistema de troca de ferramentas do braço robótico.
 #### **Material:**
-- **Estrutura e Garra:** PLA.
+- **Estrutura e Garra:** PETG.
 - **Atuador:** Servo motor MG90S.

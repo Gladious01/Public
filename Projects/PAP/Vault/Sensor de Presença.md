@@ -5,5 +5,5 @@ Sensor destinado à deteção de objetos na esteira transportadora, permitindo i
 - **Montagem:** Acoplado diretamente à estrutura da esteira transportadora.
 - **Ajuste de altura:** Suporte regulável (_bracket_), permitindo adaptar a posição do sensor à altura dos objetos.
 #### **Material:**
-- **Suporte:** Material a definir.
+- **Suporte:** PLA.
 - **Sensor:** DFRobot SEN0019.
